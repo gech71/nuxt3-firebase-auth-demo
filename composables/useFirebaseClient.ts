@@ -86,7 +86,7 @@ export default function useFirebaseClient() {
       console.log(result.data.value);
       const resultX = await useFetch("http://localhost:5000/auth/test", {
         method: "GET",
-        credentials: "same-origin",
+        credentials: "include",
         headers: { "Access-Control-Allow-Origin": "*" },
       });
       console.log(resultX, " resX");
