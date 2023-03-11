@@ -74,7 +74,7 @@ export default function useFirebaseClient() {
       "http://localhost:5000/auth/setSessionCookie",
       {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "Access-Control-Allow-Origin": "*" },
         body: { idToken },
       }
     );
@@ -87,6 +87,7 @@ export default function useFirebaseClient() {
       const resultX = await useFetch("http://localhost:5000/auth/test", {
         method: "GET",
         credentials: "same-origin",
+        headers: { "Access-Control-Allow-Origin": "*" },
       });
       console.log(resultX, " resX");
     }
