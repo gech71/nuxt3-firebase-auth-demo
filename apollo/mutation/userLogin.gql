@@ -1,0 +1,5 @@
+mutation ($idToken: String!) {
+  userLogin(token: $idToken) {
+    customToken
+  }
+}

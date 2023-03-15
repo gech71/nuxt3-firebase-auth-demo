@@ -8,12 +8,15 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@nuxtjs/apollo": "5.0.0-alpha.5",
     "nuxt": "^3.2.3"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.4.7",
     "firebase": "^9.17.2",
     "firebase-admin": "^11.5.0",
+    "graphql": "^16.6.0",
+    "graphql-tag": "^2.12.6",
     "pinia": "^2.0.33"
   }
 }
