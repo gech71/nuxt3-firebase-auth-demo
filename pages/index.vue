@@ -9,27 +9,25 @@
 import fetchSupplier from "@/apollo/query/fetchSuppliers.gql";
 import logout from "@/apollo/mutation/logout.gql";
 
-const email = ref<string>("");
-const password = ref<string>("");
-const errorMsg = ref<string>("");
+const { useCustomMutation, useCustomQuery } = useCustomApollo();
 
 const {
   mutate: logOut,
   onError: onLogoutError,
   onDone: onLogoutResult,
-} = useMutation(logout);
+} = await useCustomMutation(logout);
 
 onLogoutResult((result) => {
   const router = useRouter();
   useCookie("__current_user").value = null;
-  router.push("/login");
+  router.push("/authentication/signIn");
 });
 
 onLogoutError((error) => {
   console.log("Log out Error: " + error);
 });
 
-const { onResult, onError } = useQuery(fetchSupplier);
+const { onResult, onError } = await useCustomQuery(fetchSupplier);
 
 onResult((result) => {
   console.log(result.data);
@@ -47,6 +45,6 @@ const handleLogout = async () => {
 };
 
 definePageMeta({
-  middleware: "before-entry",
+  middleware: "before-entry-client",
 });
 </script>

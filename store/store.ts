@@ -3,11 +3,11 @@ import { defineStore } from "pinia";
 export const useApplicationStore = defineStore({
   id: "hibirlink-app-store",
   state: () => {
-    return { user: null as string | null };
+    return { toSignInPageFrom: "" };
   },
   actions: {
-    updateUser(user: null | string) {
-      this.user = user;
+    setToSignInPageFrom(from: string) {
+      this.toSignInPageFrom = from;
     },
   },
 });
