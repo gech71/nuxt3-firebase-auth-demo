@@ -26,7 +26,7 @@ onLogoutResult((result) => {
   setUID("");
   setToken("");
   const router = useRouter();
-  router.push("/authentication/signIn");
+  router.push("/auth/signIn");
 });
 
 onLogoutError((error) => {

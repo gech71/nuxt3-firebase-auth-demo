@@ -11,11 +11,11 @@
     >
       <input type="email" name="email" id="email" v-model="email" />
       <input type="password" name="password" id="password" v-model="password" />
-      <NuxtLink to="/authentication/forgetPassword">
+      <NuxtLink to="/auth/forgetPassword">
         <button>Forget password</button></NuxtLink
       >
       <button type="submit">Log in</button>
-      <NuxtLink to="/authentication/signUp">Sign Up</NuxtLink>
+      <NuxtLink to="/auth/signUp">Sign Up</NuxtLink>
 
       <p v-if="signInMessage">{{ signInMessage }}</p>
     </form>
@@ -45,7 +45,7 @@ onLoginResult(async (result) => {
   await signUserOut();
   setToken(accessToken);
   setUID(uid);
-  if (toSignInPageFrom.startsWith("/authentication")) router.push("/");
+  if (toSignInPageFrom.startsWith("/auth")) router.push("/");
   else router.back();
 });
 

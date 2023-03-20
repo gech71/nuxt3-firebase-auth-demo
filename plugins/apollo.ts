@@ -3,8 +3,6 @@ import {
   InMemoryCache,
   createHttpLink,
   ApolloLink,
-  from,
-  Operation,
 } from "@apollo/client/core";
 import { ApolloClients } from "@vue/apollo-composable";
 import { useApplicationStore } from "~~/store/store";
@@ -27,7 +25,7 @@ const withToken = setContext(async (_, { headers }) => {
     // token Expired
     if (Date.now() >= exp * 1000) {
       const config = useRuntimeConfig().public;
-      const res = await $fetch(config.BACKEND_URL + "/auth/refresh", {
+      await $fetch(config.BACKEND_URL + "/auth/refresh", {
         headers: {
           "Content-Type": "application/json",
         },
@@ -41,11 +39,12 @@ const withToken = setContext(async (_, { headers }) => {
           store.setToken(accessToken);
         })
         .catch((err) => {
+          // refresh token expires
           if (err.statusCode === 440) {
             store.setToken("");
             store.setUID("");
             const router = useRouter();
-            router.push("/authentication/rul");
+            router.push("/auth/rul");
           }
         });
     }
@@ -57,6 +56,12 @@ const withToken = setContext(async (_, { headers }) => {
         authorization: token ? `Bearer ${token.value}` : "",
       },
     };
+});
+
+const timeStartLink = new ApolloLink((operation, forward) => {
+  
+  operation.setContext({ start: new Date() });
+  return forward(operation);
 });
 
 export default defineNuxtPlugin((nuxtApp) => {

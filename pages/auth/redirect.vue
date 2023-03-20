@@ -17,7 +17,7 @@
       {{ emailVerificationResult?.message }}
     </h1>
 
-    <NuxtLink to="/authentication/signIn">
+    <NuxtLink to="/auth/signIn">
       <button>Back to login</button>
     </NuxtLink>
   </div>
@@ -34,9 +34,7 @@
       v-model="password"
     /><br />
 
-    <NuxtLink to="/authentication/signIn"
-      ><button>Back To Login</button></NuxtLink
-    >
+    <NuxtLink to="/auth/signIn"><button>Back To Login</button></NuxtLink>
     <button @click="handleResetPassword">Reset Password</button>
     <br />
     <p>{{ passwordResetMessage }}</p>

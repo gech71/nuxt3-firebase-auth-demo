@@ -12,7 +12,7 @@
       <input type="email" name="email" id="email" v-model="email" />
 
       <button type="submit">Send Reset Email Instructions</button>
-      <NuxtLink to="/authentication/signIn">Back To Sign In</NuxtLink>
+      <NuxtLink to="/auth/signIn">Back To Sign In</NuxtLink>
 
       <p v-if="msg">{{ msg }}</p>
     </form>

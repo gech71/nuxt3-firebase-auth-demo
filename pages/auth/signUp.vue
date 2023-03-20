@@ -15,7 +15,7 @@
       <input type="text" name="lastName" id="lastName" v-model="lastName" />
 
       <button type="submit">Register</button>
-      <NuxtLink to="/authentication/signIn">Log In</NuxtLink>
+      <NuxtLink to="/auth/signIn">Log In</NuxtLink>
       <p style="font-size: large">{{ signUpMessage }}</p>
     </form>
   </div>
@@ -30,10 +30,10 @@ const signUpMessage = ref<string>("");
 const handleRegister = async () => {
   const { signUpUser } = useFirebaseClient();
   const { success, message } = await signUpUser(
-    email.value,
-    password.value,
-    firstName.value,
-    lastName.value
+    email.value.trim(),
+    password.value.trim(),
+    firstName.value.trim(),
+    lastName.value.trim()
   );
 
   signUpMessage.value = message;
