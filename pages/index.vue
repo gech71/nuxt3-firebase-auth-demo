@@ -35,6 +35,10 @@ onLogoutError((error) => {
 
 const { result, onError, loading } = await useCustomQuery(fetchSupplier);
 
+watchEffect(() => {
+  result.value && console.log(result.value);
+});
+
 onError((error) => {
   console.log("Supplier Error: " + error);
 });

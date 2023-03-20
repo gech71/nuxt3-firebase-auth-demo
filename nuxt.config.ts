@@ -1,6 +1,5 @@
 import graphql from "@rollup/plugin-graphql";
 export default defineNuxtConfig({
-  ssr: false,
   modules: ["@pinia/nuxt", "@pinia-plugin-persistedstate/nuxt"],
   vite: {
     plugins: [graphql()],
