@@ -50,14 +50,16 @@ onLoginResult(async (result) => {
 });
 
 onLoginError((error) => {
-  // const { response } = error.graphQLErrors[0].extensions.internal as {
-  //   response: { status: number };
-  // };
+  if (error.graphQLErrors && error.graphQLErrors[0]?.extensions?.internal) {
+    const { response } = error.graphQLErrors[0].extensions.internal as {
+      response: { status: number };
+    };
 
+    signInMessage.value =
+      "onLogin Error: " +
+      (response.status === 403 ? "Email Not Verified." : error + "");
+  }
   signInMessage.value = error + "";
-  // signInMessage.value =
-  //   "onLogin Error: " +
-  //   (response.status === 403 ? "Email Not Verified." : error);
 });
 
 const handleLogin = async () => {
