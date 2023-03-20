@@ -58,11 +58,6 @@ const withToken = setContext(async (_, { headers }) => {
     };
 });
 
-const timeStartLink = new ApolloLink((operation, forward) => {
-  operation.setContext({ start: new Date() });
-  return forward(operation);
-});
-
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig().public;
   const httpLink = createHttpLink({
