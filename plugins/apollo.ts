@@ -2,7 +2,6 @@ import {
   ApolloClient,
   InMemoryCache,
   createHttpLink,
-  ApolloLink,
 } from "@apollo/client/core";
 import { ApolloClients } from "@vue/apollo-composable";
 import { useApplicationStore } from "~~/store/store";
