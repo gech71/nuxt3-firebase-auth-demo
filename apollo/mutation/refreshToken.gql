@@ -1,0 +1,5 @@
+mutation ($uid: String!) {
+  result: refreshToken(uid: $uid) {
+    accessToken
+  }
+}

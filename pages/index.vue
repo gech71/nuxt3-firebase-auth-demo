@@ -2,12 +2,16 @@
   <div>
     <button @click="() => handleLogout()">Logout</button>
     <p>secure page</p>
+    <br />
+    <p v-if="loading">Loading...</p>
+    <p v-else>{{ result }}</p>
   </div>
 </template>
 
 <script lang="ts" setup>
 import fetchSupplier from "@/apollo/query/fetchSuppliers.gql";
 import logout from "@/apollo/mutation/logout.gql";
+import { useApplicationStore } from "~~/store/store";
 
 const { useCustomMutation, useCustomQuery } = useCustomApollo();
 
@@ -18,8 +22,10 @@ const {
 } = await useCustomMutation(logout);
 
 onLogoutResult((result) => {
+  const { setUID, setToken } = useApplicationStore();
+  setUID("");
+  setToken("");
   const router = useRouter();
-  useCookie("__current_user").value = null;
   router.push("/authentication/signIn");
 });
 
@@ -27,11 +33,7 @@ onLogoutError((error) => {
   console.log("Log out Error: " + error);
 });
 
-const { onResult, onError } = await useCustomQuery(fetchSupplier);
-
-onResult((result) => {
-  console.log(result.data);
-});
+const { result, onError, loading } = await useCustomQuery(fetchSupplier);
 
 onError((error) => {
   console.log("Supplier Error: " + error);
@@ -40,8 +42,8 @@ onError((error) => {
 const router = useRouter();
 
 const handleLogout = async () => {
-  useCookie("__current_user").value = null;
-  logOut();
+  const { uid } = useApplicationStore();
+  logOut({ uid });
 };
 
 definePageMeta({

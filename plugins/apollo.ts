@@ -2,9 +2,62 @@ import {
   ApolloClient,
   InMemoryCache,
   createHttpLink,
+  ApolloLink,
   from,
+  Operation,
 } from "@apollo/client/core";
 import { ApolloClients } from "@vue/apollo-composable";
+import { useApplicationStore } from "~~/store/store";
+import { storeToRefs } from "pinia";
+import { setContext } from "@apollo/client/link/context";
+import jwtDecode from "jwt-decode";
+
+const withToken = setContext(async (_, { headers }) => {
+  const store = useApplicationStore();
+  const { token, uid } = storeToRefs(store);
+
+  if (token.value) {
+    const { exp } = jwtDecode(token.value) as {
+      name: string;
+      metadata: { roles: Array<string>; user_id: string };
+      exp: number;
+      iat: number;
+    };
+
+    // token Expired
+    if (Date.now() >= exp * 1000) {
+      const config = useRuntimeConfig().public;
+      const res = await $fetch(config.BACKEND_URL + "/auth/refresh", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          uid: uid.value,
+        }),
+      })
+        .then((value) => {
+          const { accessToken } = value as { accessToken: string };
+          store.setToken(accessToken);
+        })
+        .catch((err) => {
+          if (err.statusCode === 440) {
+            store.setToken("");
+            store.setUID("");
+            const router = useRouter();
+            router.push("/authentication/rul");
+          }
+        });
+    }
+  }
+
+  if (token.value)
+    return {
+      headers: {
+        authorization: token ? `Bearer ${token.value}` : "",
+      },
+    };
+});
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig().public;
@@ -14,8 +67,9 @@ export default defineNuxtPlugin((nuxtApp) => {
   });
 
   const apolloClient = new ApolloClient({
-    link: from([httpLink]),
+    link: withToken.concat(httpLink),
     cache: new InMemoryCache(),
   });
+
   nuxtApp.vueApp.provide(ApolloClients, { default: apolloClient });
 });

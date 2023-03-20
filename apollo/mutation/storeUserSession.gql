@@ -1,5 +1,0 @@
-mutation ($idToken: String!) {
-  user: storeUserSession(token: $idToken) {
-    uid
-  }
-}

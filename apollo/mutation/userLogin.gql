@@ -1,5 +1,6 @@
 mutation ($idToken: String!) {
   userLogin(token: $idToken) {
-    customToken
+    accessToken
+    uid
   }
 }

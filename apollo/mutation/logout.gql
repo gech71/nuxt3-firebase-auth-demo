@@ -1,5 +1,5 @@
-mutation logout {
-  logout {
+mutation ($uid: String!) {
+  logout(uid: $uid) {
     success
   }
 }
