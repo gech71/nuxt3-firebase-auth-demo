@@ -23,7 +23,7 @@ const withToken = setContext(async (_, { headers }) => {
     };
 
     // token Expired
-    if (Date.now() >= exp * 1000) {
+    if (Date.now() >= exp * 1000 && process.client) {
       const config = useRuntimeConfig().public;
       await $fetch(config.BACKEND_URL + "/auth/refresh", {
         headers: {
@@ -59,7 +59,6 @@ const withToken = setContext(async (_, { headers }) => {
 });
 
 const timeStartLink = new ApolloLink((operation, forward) => {
-  
   operation.setContext({ start: new Date() });
   return forward(operation);
 });
