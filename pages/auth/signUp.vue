@@ -1,41 +1,104 @@
 <template>
-  <div>
-    <form
-      @submit.prevent="handleRegister"
-      style="
-        display: flex;
-        flex-direction: column;
-        width: fit-content;
-        gap: 5px;
-      "
-    >
-      <input type="email" name="email" id="email" v-model="email" />
-      <input type="password" name="password" id="password" v-model="password" />
-      <input type="text" name="firstName" id="firstName" v-model="firstName" />
-      <input type="text" name="lastName" id="lastName" v-model="lastName" />
+  <div class="flex flex-col justify-center items-center min-h-screen">
+    <form class="w-full max-w-[27rem] p-5" @submit.prevent="handleRegister">
+      <h1 class="text-3xl font-bold mb-3 text-gray-700">Register</h1>
+      <h1 class="text-sm text-gray-500 mb-3">
+        Sign up and join our linked best market.
+      </h1>
+      <div>
+        <HTextField
+          name="FirstName"
+          placeholder="First Name"
+          rules="required"
+        />
 
-      <button type="submit">Register</button>
-      <NuxtLink to="/auth/signIn">Log In</NuxtLink>
-      <p style="font-size: large">{{ signUpMessage }}</p>
+        <HTextField name="LastName" placeholder="Last Name" rules="required" />
+
+        <HTextField
+          name="Email"
+          placeholder="Email Address"
+          rules="required|email"
+        />
+
+        <HTextField
+          name="Password"
+          type="password"
+          placeholder="Password"
+          rules="required|password"
+          trailing-icon="mdi:eye-outline"
+        />
+
+        <HTextField
+          name="ConfirmPassword"
+          type="password"
+          placeholder="Confirm Password"
+          rules="required|confirmPassword:Password"
+          trailing-icon="mdi:eye-outline"
+        />
+      </div>
+
+      <br />
+      <HButton
+        btn-class="w-full"
+        title="Sign Up"
+        type="submit"
+        :is-loading="loading"
+      />
+
+      <div class="max-w-[27rem] w-full flex gap-2 items-center my-3 mx-auto">
+        <span class="flex-1 h-[1px] bg-black/10"></span>
+        <p class="text-black/10 text-sm">OR</p>
+        <span class="flex-1 h-[1px] bg-black/10"></span>
+      </div>
+
+      <HButton
+        @click="handleLoginWithGoogle"
+        btn-class="w-full"
+        title="Continue with Google"
+        type="button"
+      />
     </form>
+    <p class="mt-1 text-sm text-gray-500">
+      Already have an account?
+      <NuxtLink
+        to="/auth/signIn"
+        class="font-bold text-blue-500 hover:text-blue-800"
+        >Sign In</NuxtLink
+      >
+    </p>
   </div>
 </template>
 
 <script setup lang="ts">
-const email = ref<string>("");
-const password = ref<string>("");
-const firstName = ref<string>("");
-const lastName = ref<string>("");
-const signUpMessage = ref<string>("");
-const handleRegister = async () => {
+import { useForm } from "vee-validate";
+
+const loading = ref<boolean>(false);
+
+const { handleSubmit, resetForm } = useForm();
+
+const handleRegister = handleSubmit(async (value) => {
+  loading.value = true;
+  const {
+    FirstName: firstName,
+    LastName: lastName,
+    Email: email,
+    Password: password,
+  } = value;
+
   const { signUpUser } = useFirebaseClient();
   const { success, message } = await signUpUser(
-    email.value.trim(),
-    password.value.trim(),
-    firstName.value.trim(),
-    lastName.value.trim()
+    firstName,
+    lastName,
+    email,
+    password
   );
 
-  signUpMessage.value = message;
-};
+  loading.value = false;
+});
+
+const handleLoginWithGoogle = () => {};
+
+definePageMeta({
+  middleware: "before-sign-in-client",
+});
 </script>

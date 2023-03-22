@@ -21,10 +21,10 @@ export default function useFirebaseClient() {
   const router = useRouter();
 
   const signUpUser = async (
-    email: string,
-    password: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    email: string,
+    password: string
   ) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(

@@ -35,6 +35,7 @@ const withToken = setContext(async (_, { headers }) => {
       })
         .then((value) => {
           const { accessToken } = value as { accessToken: string };
+          
           store.setToken(accessToken);
         })
         .catch((err) => {

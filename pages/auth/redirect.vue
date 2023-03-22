@@ -1,54 +1,92 @@
 <template>
-  <div v-if="_route.query.mode === 'verifyEmail' && loading">
-    <h1>Verifying...</h1>
+  <!--  -->
+  <div class="flex flex-col justify-center items-center min-h-screen">
+    <div class="w-full max-w-[27rem] p-5">
+      <div
+        v-if="_route.query.mode === 'verifyEmail' && loading"
+        class="flex justify-center items-center gap-2 w-full flex-col"
+      >
+        <div
+          class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+          role="status"
+        ></div>
+        <span class="text-xl">Verifying...</span>
+      </div>
+
+      <div
+        v-if="_route.query.mode === 'verifyEmail' && !loading"
+        class="w-full flex flex-col items-center justify-center"
+      >
+        <h1 class="text-xl font-bold mb-3 w-full text-gray-700">
+          {{
+            emailVerificationResult?.success
+              ? "Verification Success."
+              : "Try verifying your email again."
+          }}
+        </h1>
+
+        <h1 class="text-sm text-gray-500 mb-3">
+          {{ emailVerificationResult?.message }}
+        </h1>
+
+        <NuxtLink to="/auth/signIn" class="w-full mt-3">
+          <HButton btn-class="w-full" title="Back to Login" type="button" />
+        </NuxtLink>
+      </div>
+
+      <form
+        v-if="$route.query.mode === 'resetPassword'"
+        @submit.prevent="handleResetPassword"
+      >
+        <h1 class="text-3xl font-bold mb-3 text-gray-700">
+          Reset Your Password
+        </h1>
+        <h1 class="text-sm text-gray-500 mb-4">Please set your new password</h1>
+
+        <HTextField
+          name="Password"
+          type="password"
+          placeholder="Password"
+          rules="required|password"
+          trailing-icon="mdi:eye-outline"
+        />
+
+        <HTextField
+          name="ConfirmPassword"
+          type="password"
+          placeholder="Confirm Password"
+          rules="required|confirmPassword:Password"
+          trailing-icon="mdi:eye-outline"
+        />
+        <br />
+        <div class="flex gap-4">
+          <NuxtLink to="/auth/signIn" class="flex-1">
+            <HButton btn-class="w-full" title="Back to Login" type="button" />
+          </NuxtLink>
+          <HButton
+            class="flex-1"
+            btn-class="w-full"
+            title="Reset Password"
+            type="submit"
+            :is-loading="loadingForReset"
+          />
+        </div>
+      </form>
+    </div>
   </div>
-  <div
-    v-if="_route.query.mode === 'verifyEmail' && !loading"
-    class="w-full flex flex-col items-center justify-center"
-  >
-    <h1>
-      {{
-        emailVerificationResult?.success
-          ? "Verification Success"
-          : "Try verifying your email again"
-      }}
-    </h1>
-    <h1>
-      {{ emailVerificationResult?.message }}
-    </h1>
 
-    <NuxtLink to="/auth/signIn">
-      <button>Back to login</button>
-    </NuxtLink>
-  </div>
-
-  <div v-if="$route.query.mode === 'resetPassword'">
-    <h1>Reset Your Password</h1>
-    <h1>Please set your new password.</h1>
-
-    <input
-      type="text"
-      name="password"
-      id="password"
-      placeholder="new password"
-      v-model="password"
-    /><br />
-
-    <NuxtLink to="/auth/signIn"><button>Back To Login</button></NuxtLink>
-    <button @click="handleResetPassword">Reset Password</button>
-    <br />
-    <p>{{ passwordResetMessage }}</p>
-  </div>
+  <!--  -->
 </template>
 
 <script lang="ts" setup>
+import { useForm } from "vee-validate";
+
 const _route = useRoute();
 
 const emailVerificationResult = ref<{ success: boolean; message: string }>();
-const password = ref<string>("");
-const passwordResetMessage = ref("");
 
 const loading = ref(true);
+const loadingForReset = ref<boolean>(false);
 onMounted(async () => {
   if (_route.query.mode === "verifyEmail") {
     const { applyUserActionCode } = useFirebaseClient();
@@ -59,14 +97,20 @@ onMounted(async () => {
   }
 });
 
-const handleResetPassword = async () => {
+const { handleSubmit, resetForm } = useForm();
+
+const handleResetPassword = handleSubmit(async (value) => {
+  loadingForReset.value = true;
+  const { Password: password } = value;
+
   const { confirmUserPasswordReset } = useFirebaseClient();
   const { message, success } = await confirmUserPasswordReset(
     _route.query.oobCode as string,
     password.value
   );
-  passwordResetMessage.value = message;
-};
+
+  loadingForReset.value = false;
+});
 
 definePageMeta({
   validate(route) {

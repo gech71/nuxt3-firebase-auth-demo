@@ -1,11 +1,20 @@
 import graphql from "@rollup/plugin-graphql";
 export default defineNuxtConfig({
-  modules: ["@pinia/nuxt", "@pinia-plugin-persistedstate/nuxt"],
+  modules: ["@pinia/nuxt", "@pinia-plugin-persistedstate/nuxt", "nuxt-icon"],
   vite: {
     plugins: [graphql()],
   },
   build: {
     transpile: ["graphql", "@apollo/client", "@vue/apollo-composable"],
+  },
+
+  css: ["~/assets/css/tailwind.css"],
+
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
   },
 
   runtimeConfig: {
